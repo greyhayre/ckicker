@@ -2,7 +2,7 @@ import random
 import pyautogui
 from kivy.clock import Clock
 import logging
-from front.main import TabContent
+
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)

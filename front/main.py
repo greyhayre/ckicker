@@ -4,6 +4,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from back.filter import LimitedTextInput10, LimitedTextInput4
 
+
 # Установка размера окна
 height = 600
 width = 400
@@ -25,7 +26,7 @@ class TabContent(BoxLayout):
         self.input_layout1 = BoxLayout(orientation='horizontal', spacing=10, size_hint=(1, 0.1))
         self.input_layout1.add_widget(Label(text='Введите повторы:'))
         self.number_input1 = LimitedTextInput4(multiline=False, input_filter='int')
-        
+
         self.input_layout1.add_widget(self.number_input1)
 
         self.input_layout2 = BoxLayout(orientation='horizontal', spacing=10, size_hint=(1, 0.1))
@@ -94,3 +95,11 @@ class TabContent(BoxLayout):
                      self.number_input2,
                      self.number_input2_2,
                      self.number_input1)  # Передаем значения из полей ввода
+
+    def load_data(self, data):
+        """Заполняет поля ввода данными."""
+        self.number_input1.text = data.get('repeats', '')
+        self.number_input2.text = data.get('delay1', '')
+        self.number_input2_2.text = data.get('delay2', '')
+        self.number_input3.text = data.get('hotkey', '')
+        self.number_input4.text = data.get('sequence', '')
