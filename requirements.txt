@@ -1,2 +1,5 @@
 kivy[base]
 pyautogui
+pygetwindow
+pywinauto
+pywin32

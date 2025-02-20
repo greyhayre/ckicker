@@ -8,7 +8,7 @@ from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.tabbedpanel import TabbedPanelItem
 from kivy.core.window import Window
 from front.main import TabContent
-
+from back.window_selector import WindowSelector  # Импортируем класс WindowSelector
 
 height = 600
 width = 400
@@ -25,8 +25,8 @@ class MyApp(App):
         self.add_tab_button = Button(text='Добавить вкладку')
         self.del_tab_button = Button(text='Убрать вкладку')
 
-        self.add_tab_button.bind(on_press=self.add_tab)  # Привязка события нажатия кнопки к методу добавления
-        self.del_tab_button.bind(on_press=self.del_tab)  # Привязка события нажатия кнопки к методу удаления
+        self.add_tab_button.bind(on_press=self.add_tab)
+        self.del_tab_button.bind(on_press=self.del_tab)
 
         self.nav_layout.add_widget(self.add_tab_button)
         self.nav_layout.add_widget(self.del_tab_button)
@@ -45,50 +45,39 @@ class MyApp(App):
         return self.main_layout
 
     def add_tab(self, instance):
-        # Метод для добавления новой вкладки (максимум 6)
-        if self.tab_counter < 6:  # Ограничение на 6 вкладок
-            self.tab_counter += 1  # Увеличиваем счетчик вкладок
+        if self.tab_counter < 6:
+            self.tab_counter += 1
             self.tab_name = f'{self.tab_counter}'
             self.new_tab = TabbedPanelItem(text=self.tab_name)
-            self.new_tab.add_widget(TabContent())  # Используем класс TabContent для наполнения новой вкладки
+            self.new_tab.add_widget(TabContent())
             self.tab_panel.add_widget(self.new_tab)
 
-            # Проверяем, нужно ли отключать кнопку добавления
             if self.tab_counter >= 6:
                 self.add_tab_button.disabled = True
 
-            # Включаем кнопку удаления
             self.del_tab_button.disabled = False
 
     def del_tab(self, instance):
-        """Метод для удаления вкладки с самым высоким числом в названии, кроме вкладки 'Инфо'."""
-        # Создаем список вкладок, которые нужно удалить, исключая 'Инфо'
         tabs_to_remove = [tab for tab in self.tab_panel.tab_list if tab.text != 'Инфо']
-
-        # Сортируем вкладки по числовому значению в названии (предполагается, что название - это число)
         tabs_to_remove.sort(key=lambda tab: int(tab.text), reverse=True)
 
-        # Удаляем вкладку с самым высоким числом
         if tabs_to_remove:
-            highest_tab = tabs_to_remove[0]  # Вкладка с самым высоким числом
-            self.tab_panel.remove_widget(highest_tab)  # Удаляем вкладку
-            self.tab_counter -= 1  # Уменьшаем счётчик вкладок
-            print(f"Удалена вкладка: {highest_tab.text}, оставшиеся вкладки: {self.tab_counter}")  # Отладочное сообщение
+            highest_tab = tabs_to_remove[0]
+            self.tab_panel.remove_widget(highest_tab)
+            self.tab_counter -= 1
+            print(f"Удалена вкладка: {highest_tab.text}, оставшиеся вкладки: {self.tab_counter}")
 
-            # Проверяем, нужно ли отключать кнопку удаления
             if self.tab_counter == 0:
                 self.del_tab_button.disabled = True
 
-            # Включаем кнопку добавления
             self.add_tab_button.disabled = False
 
-        print("Нет вкладок для удаления, кроме 'Инфо'.")  # Отладочное сообщение
+        print("Нет вкладок для удаления, кроме 'Инфо'.")
 
     def get_all_input_data(self):
         """Собирает данные из всех полей ввода во всех вкладках."""
         all_data = {}
         for tab in self.tab_panel.tab_list:
-            # Предполагается, что каждая вкладка имеет экземпляр класса TabContent
             if isinstance(tab.content, TabContent):
                 tab_data = {
                     'repeats': tab.content.number_input1.text,
@@ -109,27 +98,22 @@ class MyApp(App):
         print("Данные сохранены:", all_data)
 
     def load_settings(self):
-        """Загружает данные из файла settings.json и создает вкладки в порядке возрастания."""
+        """Загружает данные из файла data.json и создает вкладки в порядке возрастания."""
         try:
             with open('data.json', 'r') as f:
                 data = json.load(f)
-                # Устанавливаем счётчик вкладок на количество элементов в data
                 self.tab_counter = len(data)
 
-                # Сортируем имена вкладок по возрастанию числового значения
                 sorted_tab_names = sorted(data.keys(), key=lambda x: int(x))
 
                 for tab_name in sorted_tab_names:
-                    tab_data = data[tab_name]  # Получаем данные для текущей вкладки
-                    # Создаем новую вкладку
+                    tab_data = data[tab_name]
                     new_tab = TabbedPanelItem(text=tab_name)
-                    tab_content = TabContent()  # Создаем содержимое вкладки
-
-                    # Заполняем поля ввода данными из tab_data
+                    tab_content = TabContent()
                     tab_content.load_data(tab_data)
 
                     new_tab.add_widget(tab_content)
-                    self.tab_panel.add_widget(new_tab)  # Добавляем вкладку в таб-панель
+                    self.tab_panel.add_widget(new_tab)
 
                 print("Настройки загружены:", data)
         except FileNotFoundError:
@@ -137,6 +121,10 @@ class MyApp(App):
         except json.JSONDecodeError:
             print("Ошибка при чтении файла настроек. Проверьте формат.")
 
+    def open_window_selector(self, instance):
+        """Открывает окно выбора для выбора активного окна."""
+        window_selector = WindowSelector()
+        window_selector.open()  # Открываем окно выбора
 
 if __name__ == '__main__':
     MyApp().run()

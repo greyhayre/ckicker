@@ -13,5 +13,5 @@ pip install -r requirements.txt
 1. Интерфейс - kivi  https://kivy.org/
 2. Эмуляция клавиатуры - pyautogui https://pyautogui.readthedocs.io/en/latest/
 4. Созранение данных перед выходом - json
-5. привязка к окну - ?
+5. привязка к окну - win32gui
 6. задача под звездочкой комп зрение и запись макросов в реальном времени - ?

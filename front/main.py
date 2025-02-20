@@ -3,6 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from back.filter import LimitedTextInput10, LimitedTextInput4
+from back.window_selector import WindowSelector  # Импортируем класс WindowSelector
 
 
 # Установка размера окна
@@ -47,7 +48,8 @@ class TabContent(BoxLayout):
 
         # Добавление кнопок в одну линию
         self.button_layout2 = BoxLayout(size_hint_y=None, height=50, padding=0, spacing=0)
-        self.button_target = Button(text='таргет окна', disabled=True)
+        self.button_target = Button(text='таргет окна')
+        self.button_target.bind(on_press=self.open_window_selector)
         self.button_Macro = Button(text='Запись макроса', disabled=True)
         self.button_layout2.add_widget(self.button_target)
         self.button_layout2.add_widget(self.button_Macro)
@@ -103,3 +105,8 @@ class TabContent(BoxLayout):
         self.number_input2_2.text = data.get('delay2', '')
         self.number_input3.text = data.get('hotkey', '')
         self.number_input4.text = data.get('sequence', '')
+
+    def open_window_selector(self, instance):
+        """Открывает окно выбора для выбора активного окна."""
+        window_selector = WindowSelector(target_button=instance)  # Передаем ссылку на кнопку
+        window_selector.open()  # Открываем окно выбора
