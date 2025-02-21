@@ -1,9 +1,16 @@
 {
+    "2": {
+        "repeats": "",
+        "delay1": "",
+        "delay2": "",
+        "hotkey": "",
+        "sequence": "11"
+    },
     "1": {
         "repeats": "",
         "delay1": "",
         "delay2": "",
         "hotkey": "",
-        "sequence": "1"
+        "sequence": "alt+tab [1]"
     }
 }

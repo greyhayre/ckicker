@@ -79,11 +79,16 @@ class Backender:
                 else:
                     logging.info(f'Выполняем действие: {action}')  # Логирование
                     try:
-                        pyautogui.press(action)
+                        # Разделяем действия, если они указаны через +
+                        actions = action.split('+')
+                        # Пробуем нажимать одновременно все указанные клавиши
+                        pyautogui.hotkey(*[a.strip() for a in actions])
                     except Exception as e:
-                        logging.error(f'Ошибка при нажатии на кнопку {action}: {e}')
+                        logging.error(f'Ошибка при нажатии на кнопки {action}: {e}')
+                    
+                    Backender.index += 1  # Переходим к следующему действию                                 
 
-                    Backender.index += 1
+
 
                     # Запланируем случайную задержку перед выполнением следующего действия
                     Backender.schedule_random_delay()

@@ -2,20 +2,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+
 from back.filter import LimitedTextInput10, LimitedTextInput4
-from back.window_selector import WindowSelector  # Импортируем класс WindowSelector
-
-
-# Установка размера окна
-height = 600
-width = 400
+from back.window_selector import WindowSelector
 
 
 class TabContent(BoxLayout):
     def __init__(self, **kwargs):
         super(TabContent, self).__init__(orientation='vertical', padding=10, spacing=1, **kwargs)
 
-        # Добавление кнопок в одну линию
         self.button_layout = BoxLayout(size_hint_y=None, height=50, padding=10, spacing=0)
         self.button1 = Button(text='Клавиатура')
         self.button2 = Button(text='Мышь', disabled=True)
@@ -23,7 +18,6 @@ class TabContent(BoxLayout):
         self.button_layout.add_widget(self.button2)
         self.add_widget(self.button_layout)
 
-        # Поля ввода
         self.input_layout1 = BoxLayout(orientation='horizontal', spacing=10, size_hint=(1, 0.1))
         self.input_layout1.add_widget(Label(text='Введите повторы:'))
         self.number_input1 = LimitedTextInput4(multiline=False, input_filter='int')
@@ -46,7 +40,6 @@ class TabContent(BoxLayout):
         self.number_input4 = TextInput(multiline=True, hint_text='Введите последовательность через пробел')
         self.input_layout4.add_widget(self.number_input4)
 
-        # Добавление кнопок в одну линию
         self.button_layout2 = BoxLayout(size_hint_y=None, height=50, padding=0, spacing=0)
         self.button_target = Button(text='таргет окна')
         self.button_target.bind(on_press=self.open_window_selector)
@@ -57,10 +50,8 @@ class TabContent(BoxLayout):
         self.button4 = Button(text='Запуск', size_hint=(1, 0.1))
         self.button4.bind(on_press=self.on_start)
 
-        # Показываем все поля ввода изначально
         self.show_inputs()
 
-        # Добавляем все элементы в основной layout
         self.add_widget(self.input_layout1)
         self.add_widget(self.input_layout2)
         self.add_widget(self.input_layout3)
@@ -68,38 +59,39 @@ class TabContent(BoxLayout):
         self.add_widget(self.button_layout2)
         self.add_widget(self.button4)
 
-        # Привязываем действие к кнопке 1
         self.button1.bind(on_press=self.toggle_inputs)
 
     def hide_inputs(self):
-        # Скрываем поля ввода, устанавливая их непрозрачность в 0
+        '''Скрываем поля'''
         for layout in [self.input_layout1, self.input_layout2, self.input_layout3, self.input_layout4, self.button_layout2]:
             layout.opacity = 0
-            layout.disabled = True  # Отключаем элементы, чтобы они не реагировали на нажатия
+            layout.disabled = True
+
     def show_inputs(self):
-        # Показываем поля ввода, устанавливая их непрозрачность в 1
+        '''Показываем поля'''
         for layout in [self.input_layout1, self.input_layout2, self.input_layout3, self.input_layout4, self.button_layout2]:
             layout.opacity = 1
-            layout.disabled = False  # Включаем элементы, чтобы они реагировали на нажатия
+            layout.disabled = False
 
     def toggle_inputs(self, instance):
-        # Проверяем текущее состояние видимости и переключаем
-        if self.input_layout1.opacity == 0:  # Если элементы скрыты
-            self.show_inputs()  # Показываем элементы
-        else:  # Если элементы видимы
-            self.hide_inputs()  # Скрываем элементы
+        '''Управляем полями'''
+        if self.input_layout1.opacity == 0:
+            self.show_inputs()
+        else:
+            self.hide_inputs()
 
     def on_start(self, instance):
-        from back.main import Backender  # Импортируем здесь, чтобы избежать циклического импорта
+        '''Собираем и передаем данные'''
+        from back.main import Backender
         Backender.go(self, instance,
                      self.number_input4,
                      self.number_input3,
                      self.number_input2,
                      self.number_input2_2,
-                     self.number_input1)  # Передаем значения из полей ввода
+                     self.number_input1)
 
     def load_data(self, data):
-        """Заполняет поля ввода данными."""
+        '''Запролняем поля'''
         self.number_input1.text = data.get('repeats', '')
         self.number_input2.text = data.get('delay1', '')
         self.number_input2_2.text = data.get('delay2', '')
@@ -107,6 +99,6 @@ class TabContent(BoxLayout):
         self.number_input4.text = data.get('sequence', '')
 
     def open_window_selector(self, instance):
-        """Открывает окно выбора для выбора активного окна."""
-        window_selector = WindowSelector(target_button=instance)  # Передаем ссылку на кнопку
-        window_selector.open()  # Открываем окно выбора
+        '''Новое окно таргета'''
+        window_selector = WindowSelector(target_button=instance)
+        window_selector.open()
