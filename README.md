@@ -9,6 +9,9 @@ python -m venv venv
 source venv/Scripts/activate
 pip install -r requirements.txt 
 
+pyinstaller --onefile start.py
+
+
 # что нужно
 1. Горячие клавиши
 2. Привязка к окну
@@ -22,4 +25,4 @@ pip install -r requirements.txt
 
 # V 0.1
 Окно вместе с консолью
-Можно задавать задержку, указывать в скрипте одновременное нажатие клавиш, указывать паузы, краткое описание внутри, сохранение данных
+Можно задавать задержку, указывать в скрипте одновременное нажатие клавиш, указывать паузы, краткое описание внутри, сохранение данных [Скачать](https://github.com/greyhayre/ckicker/releases/download/version/perfect_clicer.exe)
