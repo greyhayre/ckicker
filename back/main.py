@@ -100,13 +100,13 @@ class Backender:
                                     if sub_action:  # Проверяем, что поддействие не пустое
                                         pyautogui.press(sub_action)
                                     # Запланируем следующее поддействие с задержкой
-                                    Clock.schedule_once(lambda dt: execute_sub_actions(index + 1), 0.01)  # 10ms задержка
+                                    Clock.schedule_once(lambda dt: execute_sub_actions(index + 1), 0.1)  # 10ms задержка
 
                             # Запускаем выполнение поддействий
                             execute_sub_actions(0)
 
                             # Отпускаем основное действие после выполнения всех поддействий
-                            Clock.schedule_once(lambda dt: pyautogui.keyUp(main_action), len(sub_action_list) * 0.01)
+                            Clock.schedule_once(lambda dt: pyautogui.keyUp(main_action), len(sub_action_list) * 0.1)
 
                         else:
                             # Если нет скобок, выполняем действие как обычно

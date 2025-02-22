@@ -4,6 +4,6 @@
         "delay1": "",
         "delay2": "",
         "hotkey": "",
-        "sequence": "d [1]"
+        "sequence": "alt(tab,tab) [5]"
     }
 }
