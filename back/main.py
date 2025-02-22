@@ -2,6 +2,7 @@ import random
 import pyautogui
 from kivy.clock import Clock
 import logging
+import re
 
 
 # Настройка логирования
@@ -66,38 +67,61 @@ class Backender:
 
                 # Проверяем, является ли действие задержкой
                 if action.startswith('[') and action.endswith(']'):
-                    # Извлекаем значение задержки
-                    delay_time = action[1:-1].strip()  # Убираем скобки и пробелы
+                    delay_time = action[1:-1].strip()
                     try:
-                        delay_time = float(delay_time)  # Преобразуем в число
-                        logging.info(f'Дополнительная задержка: {delay_time} секунд')  # Логирование
+                        delay_time = float(delay_time)
+                        logging.info(f'[INFO] [Запланирована задержка] {delay_time} секунд')
                         Clock.schedule_once(Backender.perform_action, delay_time)
-                        Backender.index += 1  # Увеличиваем индекс, чтобы перейти к следующему действию
+                        Backender.index += 1
                     except ValueError:
-                        logging.error(f'Ошибка преобразования задержки: {delay_time}')  # Обработка ошибок
-                        Backender.index += 1  # Переходим к следующему действию, если ошибка
+                        logging.error(f'[ERROR] Ошибка преобразования задержки: {delay_time}')
+                        Backender.index += 1
                 else:
-                    logging.info(f'Выполняем действие: {action}')  # Логирование
+                    logging.info(f'[INFO] [Выполняем действие] {action}')
                     try:
-                        # Разделяем действия, если они указаны через +
-                        actions = action.split('+')
-                        # Пробуем нажимать одновременно все указанные клавиши
-                        pyautogui.hotkey(*[a.strip() for a in actions])
+                        # Проверяем наличие вложенных действий
+                        if '(' in action and ')' in action:
+                            main_action, sub_actions = action.split('(', 1)
+                            sub_actions = sub_actions[:-1]  # Убираем закрывающую скобку
+                            main_action = main_action.strip()
+                            sub_actions = sub_actions.strip()
+
+                            # Нажимаем основное действие (например, любую клавишу)
+                            pyautogui.keyDown(main_action)
+
+                            # Обрабатываем вложенные действия, разделенные запятыми
+                            sub_action_list = [sub_action.strip() for sub_action in sub_actions.split(',') if sub_action.strip()]
+
+                            # Функция для выполнения поддействий с задержкой
+                            def execute_sub_actions(index):
+                                if index < len(sub_action_list):
+                                    sub_action = sub_action_list[index]
+                                    logging.info(f'[INFO] [Выполняем поддействие] {sub_action}')
+                                    if sub_action:  # Проверяем, что поддействие не пустое
+                                        pyautogui.press(sub_action)
+                                    # Запланируем следующее поддействие с задержкой
+                                    Clock.schedule_once(lambda dt: execute_sub_actions(index + 1), 0.01)  # 10ms задержка
+
+                            # Запускаем выполнение поддействий
+                            execute_sub_actions(0)
+
+                            # Отпускаем основное действие после выполнения всех поддействий
+                            Clock.schedule_once(lambda dt: pyautogui.keyUp(main_action), len(sub_action_list) * 0.01)
+
+                        else:
+                            # Если нет скобок, выполняем действие как обычно
+                            actions = action.split('+')
+                            pyautogui.hotkey(*[a.strip() for a in actions])
+
                     except Exception as e:
-                        logging.error(f'Ошибка при нажатии на кнопки {action}: {e}')
-                    
-                    Backender.index += 1  # Переходим к следующему действию                                 
+                        logging.error(f'[ERROR] Ошибка при нажатии на кнопки {action}: {e}')
 
-
-
-                    # Запланируем случайную задержку перед выполнением следующего действия
+                    Backender.index += 1
                     Backender.schedule_random_delay()
             else:
                 Backender.index = 0
                 Backender.current_repeat += 1
                 Backender.schedule_random_delay()
-
-    @staticmethod
     def schedule_random_delay():
         delay = random.uniform(Backender.delay_1, Backender.delay_2)
         logging.info(f'Запланирована задержка: {delay:.2f} секунд')  # Логирование
