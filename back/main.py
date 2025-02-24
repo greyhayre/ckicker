@@ -2,7 +2,7 @@ import random
 import pyautogui
 from kivy.clock import Clock
 import logging
-import re
+import keyboard
 
 
 # Настройка логирования
@@ -24,6 +24,7 @@ class Backender:
         # Переключаем состояние кнопки
         if not Backender.running:
             button.text = 'Стоп'
+            button.disabled = False
             look1.disabled=True
             look2.disabled=True
             look3.disabled=True
@@ -33,6 +34,7 @@ class Backender:
             Backender.execute_sequence(sequence, repeats, delay_1, delay_2)
         else:
             button.text = 'Запуск'
+            button.disabled = False
             Backender.running = False
             look1.disabled=False
             look2.disabled=False

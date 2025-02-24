@@ -2,14 +2,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
-
+import logging
 from back.filter import LimitedTextInput10, LimitedTextInput4
 from back.window_selector import WindowSelector
-
+import keyboard
+from kivy.clock import Clock
 
 class TabContent(BoxLayout):
     def __init__(self, **kwargs):
-        super(TabContent, self).__init__(orientation='vertical', padding=10, spacing=1, **kwargs)
+        super().__init__(orientation='vertical', padding=10, spacing=1,**kwargs)
 
         self.button_layout = BoxLayout(size_hint_y=None, height=50, padding=10, spacing=0)
         self.button1 = Button(text='Клавиатура')
@@ -48,6 +49,7 @@ class TabContent(BoxLayout):
         self.button_layout2.add_widget(self.button_Macro)
 
         self.button4 = Button(text='Запуск', size_hint=(1, 0.1))
+
         self.button4.bind(on_press=self.on_start)
 
         self.show_inputs()
@@ -83,12 +85,25 @@ class TabContent(BoxLayout):
     def on_start(self, instance):
         '''Собираем и передаем данные'''
         from back.main import Backender
-        Backender.go(self, instance,
-                     self.number_input4,
-                     self.number_input3,
-                     self.number_input2,
-                     self.number_input2_2,
-                     self.number_input1)
+        hotkey = self.number_input3.text.strip()
+        if not hotkey:
+            logging.info('[INFO] Горячая клавиша не указана. Запускаем действие немедленно.')
+            Backender.go(self, instance,
+                        self.number_input4,
+                        self.number_input3,
+                        self.number_input2,
+                        self.number_input2_2,
+                        self.number_input1)
+        else:
+            logging.info(f'[INFO] Ожидание нажатия горячей клавиши: {hotkey}')
+            self.button4.text = f'горячая клавиша {hotkey}'
+            self.button4.disabled = True
+            keyboard.add_hotkey(hotkey, lambda: self.trigger_action(instance))
+    def trigger_action(self, instance):
+        '''Метод для запуска действия'''
+        from back.main import Backender
+        logging.info('[INFO] Горячая клавиша нажата. Запускаем действие.')
+        Backender.go(self, instance,self.number_input4,self.number_input3,self.number_input2,self.number_input2_2,self.number_input1)
 
     def load_data(self, data):
         '''Запролняем поля'''
