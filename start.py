@@ -135,4 +135,5 @@ class StartApp(App):
 
 
 if __name__ == '__main__':
+    StartApp().icon = 'front/media/icon.png'
     StartApp().run()

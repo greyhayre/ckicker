@@ -31,3 +31,5 @@ pyinstaller --onefile start.py
 # V 0.1
 Окно вместе с консолью
 Можно задавать задержку, указывать в скрипте одновременное нажатие клавиш, указывать паузы, краткое описание внутри, сохранение данных [Скачать](https://github.com/greyhayre/ckicker/releases/download/version/perfect_clicer.exe)
+# V 0.2
+Добавленна возможность указывать горячие клавиши [Скачать](https://github.com/greyhayre/ckicker/releases/download/version0.2/start.exe)
